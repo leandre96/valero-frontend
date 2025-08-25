@@ -1,0 +1,124 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="Nuevo Usuario" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+                    </div>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="users" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['name','client_id']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"  [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Administrar Usuarios</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Id Cliente</th>
+                        <th>Es Admin </th>
+                        <th>Acciones </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-user>
+                    <tr>
+
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Nombre</span>
+                            {{user.name}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Email</span>
+                            {{user.email}}
+                        </td>
+
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Id Cliente</span>
+                            {{user.client_id}}
+                        </td>
+
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Es Admin</span>
+                            {{user.isAdmin ? "Si" : "No"}}
+                        </td>
+
+                        <td>
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-pencil" pTooltip="Editar Usuario" class="p-button-rounded p-button-success mr-2" (click)="editUser(user)"></button>
+                                <button pButton pRipple icon="pi pi-building" pTooltip="Asignar Empresas a Usuario" class="p-button-rounded p-button-success mr-2" (click)="showEnterprises(user)"></button>
+                                <button pButton pRipple icon="pi pi-trash" pTooltip="Eliminar Usuario" class="p-button-rounded p-button-warning" (click)="deleteUser(user)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog header="Seleccionar Empresas" [(visible)]="showListEnterprises" [modal]="true" [style]="{width: '350px'}">
+            <div *ngFor="let empresa of empresas">
+                <p-checkbox class="my-2" [(ngModel)]="empresa.selected" [label]="empresa.name + ' - ' + empresa.ruc " [binary]="true"></p-checkbox>
+            </div>
+            <p-footer>
+                <button pButton label="Cerrar" (click)="closeDialogEmpresas()"></button>
+                <button pButton label="Seleccionar" (click)="selectEmpresas()"></button>
+            </p-footer>
+        </p-dialog>
+
+        <p-dialog [(visible)]="userDialog" [style]="{width: '450px'}" header="Usuario" [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="field">
+                    <label for="name">Nombre</label>
+                    <input type="text" pInputText id="name" [(ngModel)]="user.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.name}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.name">Nombre es requerido</small>
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" pInputText id="email" [(ngModel)]="user.email" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.email}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.email"> Email es requerido</small>
+                </div>
+                <div class="field">
+                    <label for="password">Contraseña</label>
+                    <input type="password" pInputText id="password" [(ngModel)]="user.password" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.password}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.password"> Contraseña es requerido</small>
+                </div>
+                <div class="field flex align-items-center gap-1">
+
+                    <p-checkbox [(ngModel)]="user.isAdmin" id="admin" [binary]="true" inputId="admin"></p-checkbox>
+                    <label for="admin"> Administrador</label>
+                </div>
+                <div class="field">
+                    <label for="client_id">Id Cliente</label>
+                    <input type="text" pInputText id="client_id" [(ngModel)]="user.client_id" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.client_id}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.client_id">Id Cliente es requerido</small>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Grabar" icon="pi pi-check" class="p-button-text" (click)="saveUser()"></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog [(visible)]="deleteUserDialog" header="Confirmar" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span *ngIf="user">Estas seguro de eliminar el usuario: <b>{{user.name}}</b>?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteUserDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Sí" (click)="confirmDelete()"></button>
+            </ng-template>
+        </p-dialog>
+
+    </div>
+    <p-toast></p-toast>
+</div>

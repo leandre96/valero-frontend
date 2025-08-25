@@ -1,0 +1,14 @@
+<h2>Bienvenido</h2>
+<p>Seleccione la empresa que se desea consultar los datos: </p>
+<div class="grid flex flex-wrap">
+    <div *ngFor="let enterprise of enterprises" class="xl:col-6 lg:col-6 md:col-6 sm:col-8 xs:col-8">
+        <div class="card my-2 xl:w-6 lg:w-6 md:w-6 sm:w-10 xs:w-10">
+            <h4>{{enterprise.name}}</h4>
+            <p>Ruc: {{enterprise.ruc}}</p>
+            <p-button
+                label="Elegir"
+                (click)="setEnterprise(enterprise)"
+            />
+        </div>
+    </div>
+</div>

@@ -1,0 +1,150 @@
+<div class="grid">
+    <h2>{{enterprise.name}}</h2>
+    <div class="col-12 lg:col-12">
+        <div class="card">
+            <!--<p-table #dt [value]="procedures"
+                     [paginator]="true"
+                     [rows]="10"
+                     responsiveLayout="scroll"
+                     [globalFilterFields]="['procedure_number', 'order_number']"
+                     [rowsPerPageOptions]="[5, 10, 20]"
+            >
+                <ng-template pTemplate="caption">
+                    <div class="flex justify-content-between flex-column sm:flex-column md:flex-row lg:flex-row xl:flex-row">
+                        <p-button  label="Quitar Filtro" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></p-button>
+                        <span class="p-input-icon-left ml-auto w-5">
+                            <i class="pi pi-search"></i>
+                            <input class="my-2 w-10" pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Buscar (No. Pedido ó No. Trámite ó Proveedor)" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="min-width:8rem" class="white-space-nowrap">No. Trámite
+                        </th>
+                        <th style="min-width:8rem" class="white-space-nowrap">No. Pedido
+                        </th>
+                        <th style="min-width:8rem" class="white-space-nowrap">Proveedor
+                        </th>
+                        <th pSortableColumn="status" style="min-width:8rem" class="white-space-nowrap">Estado <p-sortIcon field="status"></p-sortIcon></th>
+                        <th pSortableColumn="arrives_date" style="min-width:8rem" class="white-space-nowrap">Fecha de Llegada <p-sortIcon field="arrives_date"></p-sortIcon> </th>
+                        <th pSortableColumn="approval_date" style="min-width:8rem" class="white-space-nowrap">Fecha  de Aprobación DAV <p-sortIcon field="approval_date"></p-sortIcon></th>
+                        <th pSortableColumn="endorsement_date" style="min-width:8rem" class="white-space-nowrap">Fecha de Refrendo <p-sortIcon field="endorsement_date"></p-sortIcon></th>
+                        <th  style="min-width:8rem" class="white-space-nowrap">Canal de Aforo
+                        </th>
+                        <th  style="min-width:12rem" class="white-space-nowrap">Último comentario
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-procedure>
+                    <tr>
+                        <td> <span class="p-column-title">No. Trámite </span> {{procedure.procedure_number}}</td>
+                        <td>
+                            {{procedure.order_number}}</td>
+                        <td>
+                            {{procedure.merchant}}</td>
+                        <td>
+                            <p-tag class="tag-jc" [style]="getStyleStatus(procedure.status)" value="{{procedure.status == 'BORRADOR' ? 'DIGITACIÓN': procedure.status}}"></p-tag>
+                        </td>
+                        <td>
+                            {{procedure.arrives_date  | date: 'dd-MM-yyy': "GMT+0"}}
+                        </td>
+                        <td>
+                            {{procedure.approval_date}}
+                        </td>
+                        <td>
+                            {{procedure.endorsement_date | date:'dd-MM-yyyy': "GMT+0"}}
+                        </td>
+
+                        <td>
+                            {{procedure.channel ? procedure.channel : ""}}
+                        </td>
+                        <td>
+                            <p-button [disabled]="procedure.last_comment == ''" (onClick)="showDialogComment(procedure.last_comment ? procedure.last_comment : '')" icon="pi pi-external-link" label="Mostrar"></p-button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>-->
+            <p-table #dt
+                    [value]="procedures"
+                    [paginator]="true"
+                    [rows]="10"
+                    scrollHeight="500px"
+                    responsiveLayout="scroll"
+                    [globalFilterFields]="['procedure_number','order_number','merchant']"
+                    [rowsPerPageOptions]="[5,10,20]">
+
+            <ng-template pTemplate="caption">
+                <div class="flex gap-2 align-items-center flex-wrap w-full">
+                <p-button label="Quitar Filtro" class="p-button-outlined"
+                            icon="pi pi-filter-slash" (click)="clear(dt)"></p-button>
+
+                <!-- Filtro múltiple: Vía de Transporte -->
+                <p-multiSelect [options]="transportOptions"
+                                display="chip"
+                                placeholder="Vía de transporte"
+                                [(ngModel)]="selectedTransports"
+                                (onChange)="applyFilters(dt)">
+                </p-multiSelect>
+
+                <!-- Filtro múltiple: Aduana -->
+                <p-multiSelect [options]="customsOptions"
+                                display="chip"
+                                placeholder="Aduana"
+                                [(ngModel)]="selectedCustoms"
+                                (onChange)="applyFilters(dt)">
+                </p-multiSelect>
+
+                <span class="p-input-icon-left ml-auto w-5">
+                    <i class="pi pi-search"></i>
+                    <input class="my-2 w-10" pInputText type="text"
+                        (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="Buscar (No. Pedido, No. Trámite o Proveedor)" />
+                </span>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="header">
+                <tr>
+                <th>No. Trámite</th>
+                <th>No. Pedido</th>
+                <th>Proveedor</th>
+                <th pSortableColumn="status">Estado <p-sortIcon field="status"></p-sortIcon></th>
+                <th pSortableColumn="arrives_date">Fecha de Llegada <p-sortIcon field="arrives_date"></p-sortIcon></th>
+                <th pSortableColumn="approval_date">Fecha de Aprobación DAV <p-sortIcon field="approval_date"></p-sortIcon></th>
+                <th pSortableColumn="endorsement_date">Fecha de Refrendo <p-sortIcon field="endorsement_date"></p-sortIcon></th>
+                <th>Canal de Aforo</th>
+                <th>Último comentario</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-procedure>
+                <tr>
+                <td>{{procedure.procedure_number}}</td>
+                <td>{{procedure.order_number}}</td>
+                <td>{{procedure.merchant}}</td>
+                <td><p-tag class="tag-jc" [style]="getStyleStatus(procedure.status)"
+                            [value]="procedure.status=='BORRADOR'?'DIGITACIÓN':procedure.status"></p-tag></td>
+                <td>{{procedure.arrives_date  | date:'dd-MM-yyyy': 'UTC'}}</td>
+                <td>{{procedure.approval_date | date:'dd-MM-yyyy HH:mm': 'UTC'}}</td>
+                <td>{{procedure.endorsement_date | date:'dd-MM-yyyy': 'UTC'}}</td>
+                <td>{{procedure.channel || ''}}</td>
+                <td>
+                    <p-button [disabled]="!procedure.last_comment"
+                            (onClick)="showDialogComment(procedure.last_comment||'')"
+                            icon="pi pi-external-link" label="Mostrar"></p-button>
+                </td>
+                </tr>
+            </ng-template>
+            </p-table>
+
+        </div>
+    </div>
+
+</div>
+
+<p-dialog header="Ultimo Comentario Público" [(visible)]="lastCommentDialogVisible" [breakpoints]="{ '960px': '75vw' }" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" [modal] = "true">
+    <div [innerHTML]="lastCommentContent">
+    </div>
+</p-dialog>

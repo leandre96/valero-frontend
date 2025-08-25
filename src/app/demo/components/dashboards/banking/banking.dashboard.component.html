@@ -1,0 +1,147 @@
+
+<div class="grid justify-content-center flex flex-column">
+    <div class="col-12">
+        <div class="flex flex-column sm:flex-row justify-content-between gap-4">
+            <div class="flex flex-column sm:flex-row align-items-center gap-3">
+                    <span class="text-900 font-bold text-4xl">{{enterprise.name}}</span>
+            </div>
+            <div class="flex gap-2 sm:ml-auto">
+<!--
+                <button type="button" pButton pTooltip="Withdraw" tooltipPosition="bottom" icon="pi pi-download" class="p-button-rounded p-button-outlined"></button>
+-->
+            </div>
+        </div>
+    </div>
+    <div>
+        <label for="rangeDates" class="mb-3 text-lg font-semibold text-gray-700">
+          Escoger rango de fechas
+        </label>
+      
+        <!-- Contenedor de filtros alineados -->
+        <div class="flex flex-row items-center gap-3 my-4 flex-wrap">
+      
+          <!-- Calendario -->
+          <p-calendar [(ngModel)]="rangeDates" id="rangeDates" inputId="rangeDates" selectionMode="range"></p-calendar>
+      
+          <!-- Vía de transporte -->
+          <p-dropdown [options]="transportOptions" [(ngModel)]="selectedTransport" placeholder="Vía de transporte"></p-dropdown>
+      
+          <!-- Aduana -->
+          <p-dropdown [options]="customsOptions" [(ngModel)]="selectedCustoms" placeholder="Aduana"></p-dropdown>
+      
+          <!-- Proveedor -->
+          <p-dropdown [options]="providerOptions" [(ngModel)]="selectedProvider" placeholder="Proveedor"></p-dropdown>
+      
+          <!-- Botón Buscar -->
+          <p-button label="Buscar" icon="pi pi-search" (onClick)="getStatistics()"></p-button>
+        </div>
+      
+        <!-- Botones rápidos -->
+        <div class="flex flex-wrap justify-center gap-3">
+          <p-button class="my-2" label="Ultimo Més" icon="pi pi-search" (onClick)="setRangeDates(30)"></p-button>
+          <p-button class="my-2" label="Ultimo Trimestre" icon="pi pi-search" (onClick)="setRangeDates(90)"></p-button>
+          <p-button class="my-2" label="Ultimo Semestre" icon="pi pi-search" (onClick)="setRangeDates(180)"></p-button>
+          <p-button class="my-2" label="Ultimo año" icon="pi pi-search" (onClick)="setRangeDates(365)"></p-button>
+          <p-button *ngIf="proceduresCount.length > 0" class="my-2" label="Descargar" icon="pi pi-download" (onClick)="generatePdfReport()"></p-button>
+        </div>
+      </div>
+      
+
+    
+
+
+  <!--  <div class="col-12 md:col-6 xl:col-4">
+        <div class="card h-full relative overflow-hidden">
+            <svg id="visual" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="absolute left-0 top-0 h-full w-full z-1" preserveAspectRatio="none">
+                <rect x="0" y="0" width="900" height="600" fill="var(&#45;&#45;primary-600)"></rect>
+                <path d="M0 400L30 386.5C60 373 120 346 180 334.8C240 323.7 300 328.3 360 345.2C420 362 480 391 540 392C600 393 660 366 720 355.2C780 344.3 840 349.7 870 352.3L900 355L900 601L870 601C840 601 780 601 720 601C660 601 600 601 540 601C480 601 420 601 360 601C300 601 240 601 180 601C120 601 60 601 30 601L0 601Z" fill="var(&#45;&#45;primary-500)" stroke-linecap="round" stroke-linejoin="miter"></path>
+            </svg>
+            <div class="z-2 relative text-white">
+                <div class="text-xl font-semibold mb-3">Debit Card</div>
+                <div class="mb-1 font-semibold">Balance</div>
+                <div class="text-2xl mb-5 font-bold">$2.000,00</div>
+                <div class="flex align-items-center justify-content-between">
+                    <span class="text-lg">**** **** **** 1412</span>
+                    <span class="font-medium text-lg">12/26</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 md:col-6 xl:col-4">
+        <div class="card h-full">
+            <div class="flex align-items-center justify-content-between mb-3">
+                <div class="text-900 text-xl font-semibold">Credit Card</div>
+                <img src="assets/demo/images/banking/visa.svg" class="h-1rem">
+            </div>
+            <div class="text-600 mb-1 font-semibold">Debt</div>
+            <div class="text-900 text-2xl text-primary mb-5 font-bold">$1.500,00</div>
+            <div class="flex align-items-center justify-content-between">
+                <span class="text-900 text-lg">**** **** **** 1231</span>
+                <span class="text-600 font-medium text-lg">12/24</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 md:col-6 xl:col-2">
+        <div class="card h-full flex flex-column align-items-center justify-content-center">
+            <i class="pi pi-dollar text-primary text-4xl mb-4"></i>
+            <span class="text-900 text-lg mb-4 font-medium">Primary</span>
+            <span class="text-900 text-2xl text-primary font-bold">$24,345.21</span>
+        </div>
+    </div>
+    <div class="col-12 md:col-6 xl:col-2">
+        <div class="card h-full flex flex-column align-items-center justify-content-center">
+            <i class="pi pi-euro text-primary text-4xl mb-4"></i>
+            <span class="text-900 text-lg mb-4 font-medium">Currency</span>
+            <span class="text-900 text-2xl text-primary font-bold">$10,416.11</span>
+        </div>
+    </div>
+-->
+
+
+<div id="report" class="flex flex-column justify-content-center align-items-center" #report>
+    <div *ngIf="showStatistics" class="col-12 xl:col-8">
+        <div class="card">
+            <div class="text-900 text-xl font-semibold mb-3">Número de Trámites</div>
+            <p-chart class="" type="bar" [data]="chartProceduresCount" [options]="chartOptions"></p-chart>
+        </div>
+    </div>
+    <div *ngIf="showStatistics" class="col-12 xl:col-8">
+        <div class="card">
+            <div class="text-900 text-xl font-semibold mb-3">Tiempo desde: Registro Pedido hasta Envío Cliente DAV</div>
+            <p-chart type="bar" [data]="chartCreationToDav" [options]="chartOptions"></p-chart>
+        </div>
+    </div>
+    <div *ngIf="showStatistics" class="col-12 xl:col-8">
+        <div class="card">
+            <div class="text-900 text-xl font-semibold mb-3">Tiempo desde: Envío Cliente DAV hasta Aprobación Cliente DAV</div>
+            <p-chart type="bar" [data]="chartSentDavToAp" [options]="chartOptions"></p-chart>
+        </div>
+    </div>
+    <div *ngIf="showStatistics" class="col-12 xl:col-8">
+        <div class="card">
+            <div class="text-900 text-xl font-semibold mb-3">Tiempo desde: Fecha de Arribo hasta Fecha de Aceptación</div>
+            <p-chart type="bar" [data]="chartArrivesToRef" [options]="chartOptions"></p-chart>
+        </div>
+    </div>
+    <div *ngIf="showStatistics" class="col-12 xl:col-8">
+        <div class="card">
+            <div class="text-900 text-xl font-semibold mb-3">Tiempo desde: Fecha de Aceptación hasta Salida Autorizada</div>
+            <p-chart type="bar" [data]="charRefToAuthOut" [options]="chartOptions"></p-chart>
+        </div>
+    </div>
+    <div *ngIf="showStatistics" class="col-12 xl:col-8">
+        <div class="card">
+            <div class="text-900 text-xl font-semibold mb-3">Tiempo desde: Fecha de Arribo hasta Salida Autorizada</div>
+            <p-chart type="bar" [data]="chartArrivesToOut" [options]="chartOptions"></p-chart>
+        </div>
+    </div>
+    <div *ngIf="showStatistics" class="col-12 xl:col-8">
+        <div class="card">
+            <div class="text-900 text-xl font-semibold mb-3">Trámites por Tipo de Canal de Aforo</div>
+            <p-chart type="bar" [data]="chartByChannel" [options]="chartOptions"></p-chart>
+        </div>
+    </div>
+</div>
+
+
+</div>

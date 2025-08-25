@@ -1,0 +1,196 @@
+<h2>{{enterprise.name}}</h2>
+<!--<div class="grid flex flex-wrap justify-content-center my-4 flex-column lg:flex-row md:flex-row sm:flex-column">
+    
+    <div class="lg:w-20rem md:w-100 sm:90 mx-2 my-2" >
+        <div class="card h-full">
+            <span class="font-semibold text-lg">Mercancía por arribar</span>
+            <div class="flex justify-content-between align-items-start mt-3">
+                <span class="text-4xl font-bold text-900">{{cardsData.arrivalPending}}</span>
+                <img src="././assets/layout/images/aviondown.png" width="50" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="lg:w-20rem md:w-100 sm:w-90 mx-2 my-2">
+        <div class="card h-full">
+            <span class="font-semibold text-lg">Pendiente de Aprobación DAV</span>
+            <div class="flex justify-content-between align-items-start mt-3">
+                <span class="text-4xl font-bold text-900">{{cardsData.approvalDav}}</span>
+                <img src="././assets/layout/images/avionup.png" width="50" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="lg:w-20rem md:w-100 sm:w-90 mx-2 my-2">
+        <div class="card h-full">
+            <span class="font-semibold text-lg">Liquidación por Pagar</span>
+            <div class="flex justify-content-between align-items-start mt-3">
+                <span class="text-4xl font-bold text-900">{{cardsData.forPaying}}</span>
+                <img src="././assets/layout/images/dolarIcon.png" width="50" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="lg:w-20rem md:w-100 sm:w-90 mx-2 my-2">
+        <div class="card h-full">
+            <span class="font-semibold text-lg">Salida Autorizada</span>
+            <div class="flex justify-content-between align-items-start mt-3">
+                <span class="text-4xl font-bold text-900">{{cardsData.authorized_out}}</span>
+                <img src="././assets/layout/images/sealicon.png" width="50" alt="">
+            </div>
+        </div>
+    </div>
+</div>-->
+<div class="grid flex flex-wrap justify-content-center my-4 flex-column lg:flex-row md:flex-row sm:flex-column">
+    <!-- Mercancía por arribar -->
+    <div class="lg:w-20rem md:w-100 sm:90 mx-2 my-2" 
+         (click)="getProceduresByCategory('arrivalPending')">
+        <div class="card h-full cursor-pointer">
+            <span class="font-semibold text-lg">Mercancía por arribar</span>
+            <div class="flex justify-content-between align-items-start mt-3">
+                <span class="text-4xl font-bold text-900">{{cardsData.arrivalPending}}</span>
+                <img src="././assets/layout/images/aviondown.png" width="50" alt="">
+            </div>
+        </div>
+    </div>
+
+    <!-- Pendiente de Aprobación DAV -->
+    <div class="lg:w-20rem md:w-100 sm:w-90 mx-2 my-2" 
+         (click)="getProceduresByCategory('approvalDav')">
+        <div class="card h-full cursor-pointer">
+            <span class="font-semibold text-lg">Pendiente de Aprobación DAV</span>
+            <div class="flex justify-content-between align-items-start mt-3">
+                <span class="text-4xl font-bold text-900">{{cardsData.approvalDav}}</span>
+                <img src="././assets/layout/images/avionup.png" width="50" alt="">
+            </div>
+        </div>
+    </div>
+
+    <!-- Liquidación por Pagar -->
+    <div class="lg:w-20rem md:w-100 sm:w-90 mx-2 my-2" 
+         (click)="getProceduresByCategory('forPaying')">
+        <div class="card h-full cursor-pointer">
+            <span class="font-semibold text-lg">Liquidación por Pagar</span>
+            <div class="flex justify-content-between align-items-start mt-3">
+                <span class="text-4xl font-bold text-900">{{cardsData.forPaying}}</span>
+                <img src="././assets/layout/images/dolarIcon.png" width="50" alt="">
+            </div>
+        </div>
+    </div>
+
+    <!-- Salida Autorizada -->
+    <div class="lg:w-20rem md:w-100 sm:w-90 mx-2 my-2" 
+         (click)="getProceduresByCategory('authorized_out')">
+        <div class="card h-full cursor-pointer">
+            <span class="font-semibold text-lg">Salida Autorizada</span>
+            <div class="flex justify-content-between align-items-start mt-3">
+                <span class="text-4xl font-bold text-900">{{cardsData.authorized_out}}</span>
+                <img src="././assets/layout/images/sealicon.png" width="50" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="proceduresList.length > 0" class="mt-4">
+    <h3>Detalle de 
+      {{ selectedCategory === 'arrivalPending' ? 'Mercancía por Arribar' : '' }}
+      {{ selectedCategory === 'approvalDav' ? 'Pendiente de Aprobación DAV' : '' }}
+      {{ selectedCategory === 'forPaying' ? 'Liquidación por Pagar' : '' }}
+      {{ selectedCategory === 'authorized_out' ? 'Salida Autorizada' : '' }}
+    </h3>
+  
+    <p-table #dt
+         [value]="proceduresList"
+         [paginator]="true"
+         [rows]="10"
+         [rowsPerPageOptions]="[5,10,20]"
+         scrollHeight="500px"
+         responsiveLayout="scroll"
+         [globalFilterFields]="['id','order_number','status']">
+
+
+    <ng-template pTemplate="caption">
+        <div class="flex gap-2 align-items-center flex-wrap w-full">
+            
+
+            <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text"
+                       (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                       placeholder="(Trámite, Pedido)" />
+            </span>
+        </div>
+    </ng-template>
+
+    <!--  Encabezado de la tabla -->
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="id"># Trámite <p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="order_number">Pedido <p-sortIcon field="order_number"></p-sortIcon></th>
+            <th pSortableColumn="status">Estado <p-sortIcon field="status"></p-sortIcon></th>
+            <th pSortableColumn="creation_date">Fecha Creación <p-sortIcon field="creation_date"></p-sortIcon></th>
+        </tr>
+    </ng-template>
+
+    <!--  Cuerpo de la tabla -->
+    <ng-template pTemplate="body" let-proc>
+        <tr>
+            <td>{{proc.id}}</td>
+            <td>{{proc.order_number}}</td>
+            <td><p-tag class="tag-jc" [style]="getStyleStatus(proc.status)"
+                [value]="proc.status=='BORRADOR'?'DIGITACIÓN':proc.status"></p-tag></td>
+            <td>{{proc.creation_date | date:'dd-MM-yyyy HH:mm':'UTC'}}</td>
+        </tr>
+    </ng-template>
+</p-table>
+
+  </div>
+
+<!--<div class="grid">
+    <div class="col-12 xl:col-9">
+        <div class="card h-full">
+            <div class="flex align-items-start justify-content-between mb-6">
+                <span class="text-900 text-xl font-semibold">Trámites creados por mes</span>
+                --><!--                <p-dropdown [options]="weeks" [(ngModel)]="selectedWeek" styleClass="w-10rem" optionLabel="label" (onChange)="onWeekChange()"></p-dropdown>-->
+            <!--</div>
+            <p-chart type="bar" [data]="barData" [options]="barOptions" height="300px"></p-chart>
+        </div>
+    </div>
+    <div class="col-12 xl:col-3">
+        <div class="card h-full">
+            <div class="text-900 text-xl font-semibold mb-6">Tiempos de refrendo (Últimos 30 Días)</div>
+            <p-chart type="pie" [data]="pieData" [options]="pieOptions" height="300px"></p-chart>
+        </div>
+    </div>
+</div>-->
+<div class="grid grid-nogutter column-gap-3"></div>
+<div class="grid">
+    <!-- Columna de los gráficos -->
+    <div class="col-12 xl:col-9">
+        <div class="card" 
+             [ngClass]="showTramitesActivos ? 'h-full' : 'h-auto'">
+             
+            <div class="flex align-items-start justify-content-between mb-6">
+                <span class="text-900 text-xl font-semibold">Dashboard</span>
+      
+                <!-- Botón que activa el gráfico -->
+                <button pButton type="button" label="TRÁMITES ACTIVOS" 
+                        class="p-button-sm p-button-warning"
+                        (click)="toggleTramitesActivos()">
+                </button>
+            </div> 
+      
+            <!-- Mostrar el gráfico solo si se presiona el botón -->
+            <div *ngIf="showTramitesActivos">
+                <span class="text-900 text-xl font-semibold">Trámites creados por mes</span>
+                <p-chart type="bar" [data]="barData" [options]="barOptions" height="300px"></p-chart>
+            </div>
+        </div>
+      </div>
+      
+
+    <!-- Columna de pie chart -->
+    <div class="col-12 xl:col-3">
+        <div class="card h-full">
+            <div class="text-900 text-xl font-semibold mb-6">Tiempos de refrendo (Últimos 30 Días)</div>
+            <p-chart type="pie" [data]="pieData" [options]="pieOptions" height="300px"></p-chart>
+        </div>
+    </div>
+</div>
